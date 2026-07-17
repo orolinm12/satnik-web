@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<!--
+  Šatník — Terms of Use (public legal page, soft-launch landing site)
+  =======================================================================
+  Self-contained: inline CSS + inline JS only. No external fonts, no CDN,
+  no external network requests. Shares the Sand/Rosé token system and the
+  SK/EN toggle mechanism with ./index.html (same data-sk/data-en pattern,
+  same swap script) so the legal pages feel like part of the same site.
+  Source: docs/legal/terms-of-use.md (user-facing sections). Slovak copy
+  is a first pass, reviewed live.
+-->
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<script>
+/* No-flash Look bootstrap — mirrors index.html exactly. */
+(function(){
+  try {
+    if (window.localStorage.getItem('satnik-landing-look') === 'rose') {
+      document.documentElement.setAttribute('data-look', 'rose');
+    }
+  } catch (e) { /* ignore */ }
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Šatník — Podmienky používania</title>
+<meta name="description" content="Podmienky používania pre súkromný test aplikácie Šatník.">
+<meta name="robots" content="noindex, nofollow">
+<style>
+  /* ============================================================
+     TOKENS — copied from ./index.html so palette/type/spacing match.
+     ============================================================ */
+  :root{
+    --bg: #26221F;
+    --bg-elevated: #2D2925;
+    --surface: #332E29;
+    --surface-alt: #3C3630;
+    --surface-sunken: #1D1A17;
+    --border: #4B443D;
+    --border-strong: #5D554C;
+    --separator: rgba(255,255,255,0.10);
+    --hairline-highlight: rgba(255,246,230,0.06);
+
+    --text-primary: #E3BD86;
+    --text-secondary: #C6A576;
+    --text-tertiary: #9C8763;
+    --text-disabled: #6F6554;
+    --text-inverse: #26221F;
+
+    --accent: #E3BD86;
+    --accent-strong: #EFCE9C;
+    --accent-soft: #38322A;
+    --on-accent: #26221F;
+
+    --header-bg: rgba(38,34,31,0.82);
+
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 12px;
+    --space-lg: 16px;
+    --space-xl: 20px;
+    --space-xxl: 24px;
+    --space-xxxl: 32px;
+    --space-huge: 40px;
+    --space-giant: 48px;
+    --space-mega: 64px;
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-pill: 999px;
+
+    --font-display: Georgia, 'Times New Roman', Times, serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+    --fs-eyebrow: 0.8125rem;
+    --fs-h1: clamp(1.9rem, 1.5rem + 1.6vw, 2.6rem);
+    --fs-h2: clamp(1.3rem, 1.15rem + 0.6vw, 1.55rem);
+    --fs-h3: 1.1rem;
+    --fs-body-lg: 1.1875rem;
+    --fs-body: 1rem;
+    --fs-small: 0.9rem;
+    --fs-caption: 0.8125rem;
+
+    --measure: 70ch;
+
+    --dur-fast: 150ms;
+  }
+
+  :root[data-look="rose"]{
+    --bg: #25211E;
+    --bg-elevated: #2C2724;
+    --surface: #322C29;
+    --surface-alt: #3B3431;
+    --surface-sunken: #1C1917;
+    --border: #4A423E;
+    --border-strong: #5C534E;
+    --hairline-highlight: rgba(255,236,240,0.06);
+
+    --text-primary: #E2AAB8;
+    --text-secondary: #CA9AA6;
+    --text-tertiary: #A2808B;
+    --text-disabled: #6E5A5F;
+    --text-inverse: #25211E;
+
+    --accent: #E2AAB8;
+    --accent-strong: #EFC4CF;
+    --accent-soft: #3A2E31;
+    --on-accent: #25211E;
+
+    --header-bg: rgba(37,33,30,0.82);
+  }
+
+  /* ============================================================
+     RESET / BASE
+     ============================================================ */
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; }
+  ul { margin: 0; padding: 0; list-style: none; }
+  h1, h2, h3, p { margin: 0; }
+
+  :focus-visible {
+    outline: 2px solid var(--accent-strong);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+
+  .skip-link{
+    position: absolute; left: -9999px; top: 0;
+    background: var(--accent); color: var(--on-accent);
+    padding: var(--space-sm) var(--space-lg);
+    border-radius: var(--radius-md);
+    z-index: 100;
+    font-weight: 600;
+  }
+  .skip-link:focus { left: var(--space-lg); top: var(--space-lg); }
+
+  .container {
+    max-width: 1120px;
+    margin-inline: auto;
+    padding-inline: clamp(20px, 5vw, 56px);
+  }
+
+  /* ============================================================
+     HEADER
+     ============================================================ */
+  header.site-header {
+    position: sticky; top: 0; z-index: 40;
+    background: var(--header-bg);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--separator);
+  }
+  .header-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-block: var(--space-md);
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+  .back-link {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+  }
+  .back-link:hover { color: var(--accent-strong); }
+  .header-actions {
+    display: flex; align-items: center; justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: var(--space-sm) var(--space-md);
+  }
+  .lang-toggle, .look-toggle {
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 2px;
+    background: var(--surface);
+  }
+  .lang-toggle button, .look-toggle button {
+    border: none; background: transparent; cursor: pointer;
+    padding: 6px 12px; border-radius: var(--radius-pill);
+    font-size: var(--fs-caption); font-weight: 600; color: var(--text-tertiary);
+    transition: background var(--dur-fast) ease, color var(--dur-fast) ease;
+  }
+  .lang-toggle button.active, .look-toggle button.active { background: var(--accent); color: var(--on-accent); }
+
+  /* ============================================================
+     DOCUMENT CONTENT
+     ============================================================ */
+  main { display: flex; justify-content: center; }
+  .doc {
+    width: 100%;
+    max-width: var(--measure);
+    padding-inline: clamp(20px, 5vw, 56px);
+    padding-block: var(--space-giant) var(--space-mega);
+  }
+  .doc-header { margin-bottom: var(--space-xxxl); }
+  .eyebrow {
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    display: inline-block;
+    margin-bottom: var(--space-md);
+  }
+  h1 { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-h1); line-height: 1.15; color: var(--text-primary); }
+  .doc-status {
+    margin-top: var(--space-md);
+    color: var(--text-tertiary);
+    font-size: var(--fs-small);
+  }
+  h2 {
+    font-family: var(--font-display); font-weight: 600; font-size: var(--fs-h2);
+    color: var(--text-primary);
+    margin-top: var(--space-mega);
+    margin-bottom: var(--space-lg);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--separator);
+  }
+  section:first-of-type h2 { margin-top: var(--space-xxxl); }
+  h3 { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-h3); color: var(--text-primary); margin-bottom: var(--space-sm); }
+  p { color: var(--text-secondary); margin-bottom: var(--space-lg); }
+  strong { color: var(--text-primary); font-weight: 600; }
+  ul.doc-list { margin-bottom: var(--space-lg); }
+  ul.doc-list li {
+    color: var(--text-secondary);
+    padding-left: var(--space-xl);
+    position: relative;
+    margin-bottom: var(--space-sm);
+  }
+  ul.doc-list li::before {
+    content: "";
+    position: absolute; left: 4px; top: 0.6em;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--text-tertiary);
+  }
+  a.inline-link { color: var(--text-primary); text-decoration: underline; text-underline-offset: 2px; }
+  a.inline-link:hover { color: var(--accent-strong); }
+
+  /* ============================================================
+     FOOTER
+     ============================================================ */
+  footer.site-footer { padding-block: var(--space-xxl); border-top: 1px solid var(--separator); }
+  .footer-row {
+    display: flex; flex-direction: column; gap: var(--space-md);
+    align-items: center; text-align: center;
+  }
+  @media (min-width: 640px){
+    .footer-row { flex-direction: row; justify-content: space-between; text-align: left; }
+  }
+  .footer-links { display: flex; gap: var(--space-lg); }
+  .footer-links a { text-decoration: none; color: var(--text-tertiary); font-size: var(--fs-caption); }
+  .footer-links a:hover { color: var(--text-secondary); }
+  .footer-copy { color: var(--text-disabled); font-size: var(--fs-caption); }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+</style>
+</head>
+<body>
+
+<a class="skip-link" data-sk="Preskočiť na obsah" data-en="Skip to content" href="#main">Preskočiť na obsah</a>
+
+<header class="site-header">
+  <div class="container header-row">
+    <a class="back-link" href="./index.html" data-sk="← Šatník" data-en="← Šatník">← Šatník</a>
+    <div class="header-actions">
+      <div class="look-toggle" role="group" aria-label="Vzhľad / Look">
+        <button type="button" data-look-opt="sand" class="active" aria-pressed="true">Sand</button>
+        <button type="button" data-look-opt="rose" aria-pressed="false">Rosé</button>
+      </div>
+      <div class="lang-toggle" role="group" aria-label="Jazyk / Language">
+        <button type="button" data-lang-opt="sk" class="active" aria-pressed="true">SK</button>
+        <button type="button" data-lang-opt="en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<article class="doc">
+
+  <div class="doc-header">
+    <span class="eyebrow" data-sk="Právne informácie" data-en="Legal">Právne informácie</span>
+    <h1 data-sk="Podmienky používania" data-en="Terms of Use">Podmienky používania</h1>
+    <p class="doc-status" data-sk="Súkromný test na pozvánky · Naposledy aktualizované: 17. júla 2026" data-en="Private invite-only test · Last updated: 17 July 2026">Súkromný test na pozvánky · Naposledy aktualizované: 17. júla 2026</p>
+  </div>
+
+  <section>
+    <h2 data-sk="1. O aplikácii" data-en="1. About the app">1. O aplikácii</h2>
+    <p>
+      <span data-sk="Šatník je aplikácia na správu osobného šatníka a AI návrhy outfitov. Prevádzkuje ju " data-en="Šatník is a personal wardrobe management and AI outfit-suggestion app. It is operated by ">Šatník je aplikácia na správu osobného šatníka a AI návrhy outfitov. Prevádzkuje ju </span><strong data-sk="MPTC Technologies s.r.o." data-en="MPTC Technologies s.r.o.">MPTC Technologies s.r.o.</strong><span data-sk=". Používaním aplikácie súhlasíte s týmito podmienkami." data-en=". By using the app, you agree to these terms.">. Používaním aplikácie súhlasíte s týmito podmienkami.</span>
+    </p>
+  </section>
+
+  <section>
+    <h2 data-sk="2. Fáza spustenia" data-en="2. Launch phase">2. Fáza spustenia</h2>
+    <p>
+      <span data-sk="Šatník je momentálne v " data-en="Šatník is currently in a ">Šatník je momentálne v </span><strong data-sk="súkromnej testovacej fáze na pozvánky" data-en="private, invite-only test phase">súkromnej testovacej fáze na pozvánky</strong><span data-sk=" — malý počet používateľov, aplikácia sa aktívne vyvíja. To znamená:" data-en=" — a small number of users, actively under development. This means:"> — malý počet používateľov, aplikácia sa aktívne vyvíja. To znamená:</span>
+    </p>
+    <ul class="doc-list">
+      <li data-sk="Môžu sa vyskytnúť chyby alebo dočasná nedostupnosť." data-en="Bugs or temporary unavailability may occur.">Môžu sa vyskytnúť chyby alebo dočasná nedostupnosť.</li>
+      <li data-sk="Funkcie sa môžu meniť bez dlhého predstihu." data-en="Features may change without long notice.">Funkcie sa môžu meniť bez dlhého predstihu.</li>
+      <li data-sk="Nejde o hotový, komerčne garantovaný produkt." data-en="This is not a finished, commercially guaranteed product.">Nejde o hotový, komerčne garantovaný produkt.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 data-sk="3. Váš účet" data-en="3. Your account">3. Váš účet</h2>
+    <ul class="doc-list">
+      <li data-sk="Účet si vytvárate cez e-mail a heslo; e-mailovú adresu je potrebné potvrdiť." data-en="You create an account with email and password; the email address must be verified.">Účet si vytvárate cez e-mail a heslo; e-mailovú adresu je potrebné potvrdiť.</li>
+      <li data-sk="Ste zodpovední za bezpečnosť svojho hesla a za všetko, čo sa deje pod vaším účtom." data-en="You are responsible for keeping your password secure and for everything that happens under your account.">Ste zodpovední za bezpečnosť svojho hesla a za všetko, čo sa deje pod vaším účtom.</li>
+      <li data-sk="Účet je určený na osobné, nekomerčné použitie." data-en="The account is intended for personal, non-commercial use.">Účet je určený na osobné, nekomerčné použitie.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 data-sk="4. Váš obsah" data-en="4. Your content">4. Váš obsah</h2>
+    <ul class="doc-list">
+      <li><span data-sk="Fotografie a informácie, ktoré nahráte (fotky oblečenia, poznámky, preferencie), " data-en="Photos and information you upload (clothing photos, notes, preferences) ">Fotografie a informácie, ktoré nahráte (fotky oblečenia, poznámky, preferencie), </span><strong data-sk="zostávajú vaše" data-en="remain yours">zostávajú vaše</strong><span data-sk="." data-en=".">.</span></li>
+      <li data-sk="Aby aplikácia mohla fungovať, dávate nám obmedzené povolenie tento obsah spracovať — uložiť ho, zobraziť vám ho, poslať ho AI službám na popis/úpravu fotky a použiť ho na návrh outfitov (pozri Zásady ochrany osobných údajov)." data-en="To make the app work, you grant us a limited permission to process this content — store it, show it to you, send it to AI services for photo description/editing, and use it to suggest outfits (see the Privacy Policy).">Aby aplikácia mohla fungovať, dávate nám obmedzené povolenie tento obsah spracovať — uložiť ho, zobraziť vám ho, poslať ho AI službám na popis/úpravu fotky a použiť ho na návrh outfitov (pozri Zásady ochrany osobných údajov).</li>
+      <li data-sk="Toto povolenie zaniká, keď svoj obsah vymažete alebo zrušíte účet (s výnimkou kópií, ktoré ešte krátko existujú v zálohách, kým sa neprepíšu)." data-en="This permission ends when you delete your content or close your account (except for copies that briefly persist in backups until overwritten).">Toto povolenie zaniká, keď svoj obsah vymažete alebo zrušíte účet (s výnimkou kópií, ktoré ešte krátko existujú v zálohách, kým sa neprepíšu).</li>
+      <li data-sk="Neposielajte fotky, ktoré nie sú vaše, alebo ktoré zobrazujú iné osoby bez ich súhlasu." data-en="Do not upload photos that are not yours, or that show other people without their consent.">Neposielajte fotky, ktoré nie sú vaše, alebo ktoré zobrazujú iné osoby bez ich súhlasu.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 data-sk="5. AI návrhy — čo môžete a nemôžete očakávať" data-en="5. AI suggestions — what to expect (and not expect)">5. AI návrhy — čo môžete a nemôžete očakávať</h2>
+    <ul class="doc-list">
+      <li><span data-sk="Návrhy outfitov generuje umelá inteligencia na základe vášho šatníka, predpovede počasia a vašich preferencií. Sú to " data-en="Outfit suggestions are generated by AI based on your wardrobe, the weather forecast, and your preferences. They are ">Návrhy outfitov generuje umelá inteligencia na základe vášho šatníka, predpovede počasia a vašich preferencií. Sú to </span><strong data-sk="návrhy, nie záruka" data-en="suggestions, not guarantees">návrhy, nie záruka</strong><span data-sk=" — AI sa môže mýliť (napr. nesprávne vyhodnotiť počasie alebo situáciu)." data-en=" — the AI can get things wrong (e.g. misjudge weather or context)."> — AI sa môže mýliť (napr. nesprávne vyhodnotiť počasie alebo situáciu).</span></li>
+      <li data-sk="Návrhy nie sú profesionálne štylistické poradenstvo a nenahrádzajú váš vlastný úsudok." data-en="Suggestions are not professional styling advice and do not replace your own judgment.">Návrhy nie sú profesionálne štylistické poradenstvo a nenahrádzajú váš vlastný úsudok.</li>
+      <li data-sk="V súlade s európskym nariadením o AI (EU AI Act, čl. 50) aplikácia jasne označuje obsah generovaný umelou inteligenciou." data-en="In line with the EU AI Act (Article 50), the app clearly labels AI-generated content.">V súlade s európskym nariadením o AI (EU AI Act, čl. 50) aplikácia jasne označuje obsah generovaný umelou inteligenciou.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 data-sk="6. Affiliate odkazy" data-en="6. Affiliate links">6. Affiliate odkazy</h2>
+    <p data-sk="Aplikácia môže zobrazovať odkazy &quot;kde kúpiť&quot; na tretie strany (napr. Amazon). Kliknutím opúšťate Šatník a vstupujete na stránku tretej strany, na ktorú sa vzťahujú jej vlastné podmienky. Šatník môže z nákupu cez takýto odkaz získať províziu — to neovplyvňuje cenu, ktorú platíte. Šatník negarantuje kvalitu, dostupnosť ani ceny produktov tretích strán." data-en="The app may show &quot;where to buy&quot; links to third parties (e.g. Amazon). Clicking one takes you off Šatník to a third-party site governed by its own terms. Šatník may earn a commission from a purchase made via such a link — this does not affect the price you pay. Šatník does not guarantee the quality, availability, or pricing of third-party products.">Aplikácia môže zobrazovať odkazy "kde kúpiť" na tretie strany (napr. Amazon). Kliknutím opúšťate Šatník a vstupujete na stránku tretej strany, na ktorú sa vzťahujú jej vlastné podmienky. Šatník môže z nákupu cez takýto odkaz získať províziu — to neovplyvňuje cenu, ktorú platíte. Šatník negarantuje kvalitu, dostupnosť ani ceny produktov tretích strán.</p>
+  </section>
+
+  <section>
+    <h2 data-sk="7. Ako aplikáciu (ne)používať" data-en="7. Acceptable use">7. Ako aplikáciu (ne)používať</h2>
+    <p data-sk="Nepoužívajte Šatník na: nahrávanie nezákonného obsahu, pokusy o obídenie bezpečnostných opatrení alebo limitov, zneužívanie AI funkcií spôsobom, ktorý by neprimerane zaťažil službu (napr. automatizované hromadné požiadavky)." data-en="Do not use Šatník to: upload unlawful content, attempt to bypass security measures or limits, or misuse AI features in a way that places an unreasonable load on the service (e.g. automated bulk requests).">Nepoužívajte Šatník na: nahrávanie nezákonného obsahu, pokusy o obídenie bezpečnostných opatrení alebo limitov, zneužívanie AI funkcií spôsobom, ktorý by neprimerane zaťažil službu (napr. automatizované hromadné požiadavky).</p>
+  </section>
+
+  <section>
+    <h2 data-sk="8. Dostupnosť služby" data-en="8. Service availability">8. Dostupnosť služby</h2>
+    <p data-sk="Vzhľadom na malý rozsah tejto fázy negarantujeme nepretržitú dostupnosť. Váš vlastný obsah (fotky, dáta) sa snažíme chrániť (zálohy, súkromné úložisko), ale odporúčame používať vstavanú funkciu exportu dát ako vlastnú zálohu." data-en="Given the small scale of this phase, we do not guarantee continuous availability. We aim to protect your own content (photos, data) — backups, private storage — but we recommend using the built-in data export feature as your own backup.">Vzhľadom na malý rozsah tejto fázy negarantujeme nepretržitú dostupnosť. Váš vlastný obsah (fotky, dáta) sa snažíme chrániť (zálohy, súkromné úložisko), ale odporúčame používať vstavanú funkciu exportu dát ako vlastnú zálohu.</p>
+  </section>
+
+  <section>
+    <h2 data-sk="9. Zrušenie účtu" data-en="9. Ending your account">9. Zrušenie účtu</h2>
+    <ul class="doc-list">
+      <li data-sk="Účet môžete kedykoľvek prestať používať." data-en="You may stop using your account at any time.">Účet môžete kedykoľvek prestať používať.</li>
+      <li><span data-sk="Vymazanie účtu a dát si v tejto fáze vyžaduje kontaktovať nás na " data-en="Deleting your account and data at this stage requires contacting us at ">Vymazanie účtu a dát si v tejto fáze vyžaduje kontaktovať nás na </span><strong>martinorolin12@gmail.com</strong><span data-sk=" (samoobslužné tlačidlo v aplikácii zatiaľ nie je k dispozícii)." data-en=" (a self-service in-app button is not yet available)."> (samoobslužné tlačidlo v aplikácii zatiaľ nie je k dispozícii).</span></li>
+      <li data-sk="Môžeme pozastaviť alebo zrušiť účet, ktorý porušuje tieto podmienky." data-en="We may suspend or close an account that violates these terms.">Môžeme pozastaviť alebo zrušiť účet, ktorý porušuje tieto podmienky.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 data-sk="10. Obmedzenie zodpovednosti" data-en="10. Limitation of liability">10. Obmedzenie zodpovednosti</h2>
+    <p data-sk="Šatník poskytujeme &quot;tak ako je&quot;, v rámci fázy súkromného testovania, bez záruky konkrétneho výsledku. V rozsahu povolenom zákonom nezodpovedáme za nepriame škody vyplývajúce z použitia AI návrhov, výpadku služby alebo produktov tretích strán." data-en="We provide Šatník &quot;as is,&quot; during a private test phase, without a guarantee of any specific outcome. To the extent permitted by law, we are not liable for indirect damages arising from use of AI suggestions, service downtime, or third-party products.">Šatník poskytujeme "tak ako je", v rámci fázy súkromného testovania, bez záruky konkrétneho výsledku. V rozsahu povolenom zákonom nezodpovedáme za nepriame škody vyplývajúce z použitia AI návrhov, výpadku služby alebo produktov tretích strán.</p>
+  </section>
+
+  <section>
+    <h2 data-sk="11. Zmeny podmienok" data-en="11. Changes to these terms">11. Zmeny podmienok</h2>
+    <p data-sk="Podmienky môžeme časom upraviť. O podstatných zmenách vás budeme informovať v aplikácii alebo e-mailom pred nadobudnutím účinnosti." data-en="We may update these terms over time. We will notify you of material changes in the app or by email before they take effect.">Podmienky môžeme časom upraviť. O podstatných zmenách vás budeme informovať v aplikácii alebo e-mailom pred nadobudnutím účinnosti.</p>
+  </section>
+
+  <section>
+    <h2 data-sk="12. Rozhodné právo" data-en="12. Governing law">12. Rozhodné právo</h2>
+    <p data-sk="Tieto podmienky sa spravujú právom Slovenskej republiky a právom Európskej únie." data-en="These terms are governed by the laws of the Slovak Republic and the European Union.">Tieto podmienky sa spravujú právom Slovenskej republiky a právom Európskej únie.</p>
+  </section>
+
+  <section>
+    <h2 data-sk="13. Kontakt" data-en="13. Contact">13. Kontakt</h2>
+    <p><strong><a class="inline-link" href="mailto:martinorolin12@gmail.com">martinorolin12@gmail.com</a></strong></p>
+  </section>
+
+</article>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-row">
+    <p class="footer-copy">&copy; 2026 MPTC Technologies s.r.o.</p>
+    <ul class="footer-links">
+      <li><a href="./privacy.html" data-sk="Ochrana súkromia" data-en="Privacy Policy">Ochrana súkromia</a></li>
+      <li><a href="./index.html" data-sk="Domov" data-en="Home">Domov</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+
+  function applyLang(lang){
+    var isEn = lang === 'en';
+    document.documentElement.lang = isEn ? 'en' : 'sk';
+
+    var textNodes = document.querySelectorAll('[data-sk]');
+    for (var i = 0; i < textNodes.length; i++){
+      var el = textNodes[i];
+      var val = el.getAttribute(isEn ? 'data-en' : 'data-sk');
+      if (val !== null) { el.textContent = val; }
+    }
+
+    var opts = document.querySelectorAll('.lang-toggle button');
+    for (var m = 0; m < opts.length; m++){
+      var opt = opts[m];
+      var isActive = opt.getAttribute('data-lang-opt') === lang;
+      opt.classList.toggle('active', isActive);
+      opt.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    }
+
+    try { window.localStorage.setItem('satnik-landing-lang', lang); } catch (e) { /* ignore */ }
+  }
+
+  var toggleButtons = document.querySelectorAll('.lang-toggle button');
+  for (var n = 0; n < toggleButtons.length; n++){
+    toggleButtons[n].addEventListener('click', function(ev){
+      applyLang(ev.currentTarget.getAttribute('data-lang-opt'));
+    });
+  }
+
+  var saved = null;
+  try { saved = window.localStorage.getItem('satnik-landing-lang'); } catch (e) { /* ignore */ }
+  if (saved === 'en') { applyLang('en'); }
+
+  function applyLook(look){
+    var isRose = look === 'rose';
+    if (isRose) { document.documentElement.setAttribute('data-look', 'rose'); }
+    else { document.documentElement.removeAttribute('data-look'); }
+
+    var lookOpts = document.querySelectorAll('.look-toggle button');
+    for (var q = 0; q < lookOpts.length; q++){
+      var lookOpt = lookOpts[q];
+      var isLookActive = lookOpt.getAttribute('data-look-opt') === look;
+      lookOpt.classList.toggle('active', isLookActive);
+      lookOpt.setAttribute('aria-pressed', isLookActive ? 'true' : 'false');
+    }
+
+    try { window.localStorage.setItem('satnik-landing-look', look); } catch (e) { /* ignore */ }
+  }
+
+  var lookButtons = document.querySelectorAll('.look-toggle button');
+  for (var p = 0; p < lookButtons.length; p++){
+    lookButtons[p].addEventListener('click', function(ev){
+      applyLook(ev.currentTarget.getAttribute('data-look-opt'));
+    });
+  }
+
+  var savedLook = null;
+  try { savedLook = window.localStorage.getItem('satnik-landing-look'); } catch (e) { /* ignore */ }
+  if (savedLook === 'rose') { applyLook('rose'); }
+})();
+</script>
+
+</body>
+</html>
