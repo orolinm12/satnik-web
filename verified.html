@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<!--
+  Fazo — "email verified" confirmation page (public, hosted on the satnik-web GitHub
+  Pages repo). Where the Supabase "Confirm signup" email link lands: a branded,
+  standalone page telling the user their email is verified and to return to the app.
+  Standalone web page, so it uses the FAZO brand-board visual language directly
+  (kosť/ultramarine/zips + the Z-mark + Archivo) — unlike the in-app screens, which
+  stay on the current pastel design language until the design-system phase (task #21).
+  SK-first with an EN line. No JavaScript. Mobile-first. noindex/nofollow.
+  Brand source: docs/design/fazo-brand-v1.html + FAZO-DESIGN.md §8 (mark = never redrawn).
+-->
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fazo — E-mail overený</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2226%22 fill=%22%231B2AC8%22/><g fill=%22%23F3EFE4%22 stroke=%22%23F3EFE4%22><rect x=%2224%22 y=%2226%22 width=%2252%22 height=%2211%22 rx=%222%22/><rect x=%2224%22 y=%2263%22 width=%2252%22 height=%2211%22 rx=%222%22/><line x1=%2270%22 y1=%2233%22 x2=%2230%22 y2=%2267%22 stroke-width=%225%22 stroke-linecap=%22round%22/></g></svg>">
+<meta name="description" content="Tvoj e-mail pre aplikáciu Fazo je overený.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --kost:#F3EFE4;      /* bone — page background */
+    --ultra:#1B2AC8;     /* ultramarine — primary/brand mark */
+    --ink:#17161A;       /* ink — headline/text */
+    --zips:#FF5A1F;      /* zips orange — accent */
+    --melir:#6B675C;     /* muted secondary text */
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--kost);
+    color:var(--ink);
+    font-family:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100svh;
+    display:flex;align-items:center;justify-content:center;
+    padding:32px 22px calc(32px + env(safe-area-inset-bottom));
+    position:relative;overflow:hidden;
+  }
+  /* the brand "zipper tape" motif (fazo-brand-v1.html .tape), a quiet vertical accent */
+  body::after{
+    content:"";position:fixed;top:0;right:0;bottom:0;width:10px;
+    background:repeating-linear-gradient(0deg,var(--zips) 0 9px,transparent 9px 18px);
+    opacity:.85;
+  }
+  .card{width:100%;max-width:360px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:20px}
+  /* fazo wordmark lockup: fa + Z-mark + o (FAZO-DESIGN.md §8; mark takes ultramarine in light contexts) */
+  /* gap is negative + the mark oversized because the Z-mark carries ~16% viewBox padding —
+     this makes the visible Z match the cap-height and fuse into one "fazo" word. */
+  .wordmark{display:flex;align-items:baseline;gap:1px;line-height:1;color:var(--ink)}
+  .wordmark .lt{font-weight:900;font-size:34px;letter-spacing:-.045em}
+  .wordmark .zm{width:33px;height:33px;display:inline-block;transform:translateY(3px)}
+  /* success badge: ultramarine disc + bone check */
+  .check{width:88px;height:88px}
+  h1{font-weight:900;font-size:30px;line-height:1.1;letter-spacing:-.01em;color:var(--ink)}
+  .sk{font-size:16px;line-height:1.5;color:var(--ink);max-width:30ch}
+  .en{font-family:'IBM Plex Mono','SFMono-Regular',ui-monospace,monospace;font-size:11.5px;letter-spacing:.06em;line-height:1.5;color:var(--melir);text-transform:uppercase}
+  @media (max-width:360px){
+    .wordmark .lt{font-size:30px}.wordmark .zm{width:29px;height:29px}
+    h1{font-size:26px}.check{width:76px;height:76px}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .card{animation:rise .45s ease both}
+    @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  }
+</style>
+</head>
+<body>
+  <main class="card">
+    <div class="wordmark" aria-label="Fazo">
+      <span class="lt">fa</span>
+      <svg class="zm" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+        <rect x="16" y="17" width="68" height="15" rx="2.5" fill="var(--ultra)"/>
+        <rect x="16" y="68" width="68" height="15" rx="2.5" fill="var(--ultra)"/>
+        <line x1="70.5" y1="28.5" x2="26.5" y2="62.5" stroke="var(--ultra)" stroke-width="6" stroke-linecap="round"/>
+        <line x1="76.5" y1="36.5" x2="32.5" y2="70.5" stroke="var(--ultra)" stroke-width="6" stroke-linecap="round"/>
+        <line x1="73.5" y1="32.5" x2="29.5" y2="66.5" stroke="var(--ultra)" stroke-width="3.4" stroke-dasharray="3.2 4.4" stroke-linecap="round"/>
+        <g transform="rotate(52.3 51.5 49.5)">
+          <rect x="44.5" y="38.5" width="14" height="22" rx="4" fill="var(--ultra)"/>
+          <circle cx="51.5" cy="56.5" r="2.6" fill="var(--kost)"/>
+        </g>
+      </svg>
+      <span class="lt">o</span>
+    </div>
+
+    <svg class="check" viewBox="0 0 100 100" role="img" aria-label="Overené">
+      <circle cx="50" cy="50" r="46" fill="var(--ultra)"/>
+      <path d="M30 51.5 L44 65 L71 37" fill="none" stroke="var(--kost)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+
+    <h1>E-mail overený.</h1>
+    <p class="sk">Vráť sa do aplikácie Fazo a prihlás sa.</p>
+    <p class="en">Email verified — return to the Fazo app.</p>
+  </main>
+</body>
+</html>
