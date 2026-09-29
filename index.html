@@ -982,12 +982,6 @@ html.motion .phones.in .scr--closet .t:nth-child(8){ animation-delay:.49s } html
 .sw{ display:flex; gap:6px }
 .sw i{ width:26px; height:34px; border-radius:8px; background:var(--c); box-shadow:0 0 0 1px var(--line) inset }
 
-/* ── the founding line (publish only once migration 0047 is live) ─────── */
-.found{ display:inline-flex; align-items:center; gap:10px; margin:0; padding:10px 14px 10px 10px; border-radius:14px;
-  background:color-mix(in srgb,var(--on-ultra) 12%,transparent); box-shadow:0 0 0 1.5px color-mix(in srgb,var(--on-ultra) 30%,transparent) inset;
-  font-weight:700; font-size:1rem; letter-spacing:-.01em }
-.found .fz-tag{ background:var(--zips); color:var(--on-zips); border-radius:999px; padding:4px 10px; font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase }
-
 /* reduced motion: every screen stands still on its telling scene (JS picks it) */
 @media (prefers-reduced-motion:reduce){
   .feed{ transition:none }
@@ -1756,8 +1750,6 @@ html.motion .phones.in .scr--closet .t:nth-child(8){ animation-delay:.49s } html
       <div class="cta-in">
         <h2 class="h2 rise" style="--d:1" id="h-pozvanka" data-sk="Chceš to skúsiť?" data-en="Want to try it?">Chceš to skúsiť?</h2>
         <p class="lede rise" style="--d:2" data-sk="Fazo je zatiaľ v súkromnom testovaní. Napíš nám a ozveme sa s pozvánkou." data-en="Fazo is still in private testing. Write to us and we will send you an invite.">Fazo je zatiaľ v súkromnom testovaní. Napíš nám a ozveme sa s pozvánkou.</p>
-        <!-- FOUNDING OFFER: publish only once migration 0047 (founding_open) is applied -->
-        <p class="found rise" style="--d:3"><span class="fz-tag" data-sk="Zakladajúci členovia" data-en="Founding members">Zakladajúci členovia</span><span data-sk="Rok Fazo Plus zadarmo pre prvých používateľov." data-en="A year of Fazo Plus, free, for early members.">Rok Fazo Plus zadarmo pre prvých používateľov.</span></p>
         <a class="btn rise" style="--d:3" href="mailto:martinorolin12@gmail.com?subject=Fazo%20%E2%80%94%20pozv%C3%A1nka">
           <span data-sk="Požiadať o pozvánku" data-en="Request an invite">Požiadať o pozvánku</span>
           <svg class="arw" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 8h12M9 3l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
