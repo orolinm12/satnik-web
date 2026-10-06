@@ -554,6 +554,259 @@ html.motion .rail.on{
   letter-spacing:.1em; text-transform:uppercase; opacity:.5;
 }
 
+/* ── pricing ──────────────────────────────────────────────────────────────
+   Three swing tags on a clothes rail, and under them ONE sewn-in care label that
+   carries the comparison ("Zloženie") in the same three columns, so each tag reads
+   straight down into its own column. --pcols is the row template of the label;
+   the tags are always its three value columns. --pin is the inner edge both share,
+   which is what lines a number up under the name on its tag.
+   Base layer: static and complete. html.motion adds the arrival (the rail draws,
+   the tags swing in and settle). The billing switch answers a tap: the two paid
+   tags turn on their string and come back with the other price — the script swaps
+   the text while a tag is edge-on, and swaps it at once under reduced motion. */
+#cennik{
+  overflow-x:clip;
+  --pcols:repeat(3,minmax(0,1fr)); --pgap:8px; --pin:10px;
+  --stub:92px; --hole:17px; --hr:5px; --cut:12px;
+  /* the fixed header's own height (58.5px; 64.8px once its CTA shows at 900px) —
+     where the label's column names park */
+  --hdr-h:calc(58px + env(safe-area-inset-top));
+}
+@media (min-width:900px){ #cennik{ --hdr-h:calc(64px + env(safe-area-inset-top)) } }
+.pgrid{ display:grid; grid-template-columns:minmax(0,1fr); row-gap:clamp(34px,6vh,52px) }
+.pintro{ display:flex; flex-direction:column; align-items:flex-start; min-width:0 }
+.pintro .lede{ max-width:46ch }
+
+/* the period switch — the header's language pill, grown to a 44px target */
+.bill{
+  position:relative; display:inline-grid; grid-template-columns:1fr 1fr;
+  margin-top:26px; padding:3px; border:1.5px solid var(--ink); border-radius:999px;
+}
+.bill-pill{
+  position:absolute; top:3px; bottom:3px; left:3px; width:calc(50% - 3px);
+  border-radius:999px; background:var(--ink);
+  transform:translateX(calc(var(--b,0) * 100%)); transition:transform .32s var(--ease);
+}
+.bill-b{
+  position:relative; z-index:1; min-width:108px; min-height:44px; padding:0 20px; border-radius:999px;
+  font-size:.94rem; font-weight:700; letter-spacing:-.01em; transition:color .25s ease;
+}
+.bill-b[aria-pressed="true"]{ color:var(--bone) }
+.bill-cap{
+  margin:12px 0 0; max-width:36ch; color:var(--muted);
+  font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:11px; line-height:1.55; letter-spacing:.02em;
+}
+
+/* the rail runs off the right edge of the page; body clips the last few px */
+.ptags{ position:relative; min-width:0 }
+.prail{
+  position:absolute; z-index:1; top:6px; height:5px; left:-12px;
+  right:calc(-1 * (var(--gut) + max(0px,(100vw - 1220px) / 2)));
+  background:var(--ink); border-radius:3px 0 0 3px; transform-origin:0 50%;
+}
+.prail::before{
+  content:''; position:absolute; left:-5px; top:50%; width:11px; height:11px; margin-top:-5.5px;
+  border-radius:50%; background:var(--ink);
+}
+.ptags ul{
+  list-style:none; margin:0; padding:0; display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr)); column-gap:var(--pgap); align-items:stretch;
+}
+/* three string lengths: nothing on a rail hangs level. The tags' feet stay level. */
+/* each tag is its own size container: its type is set in cqw, so a name and a
+   price fit their tag at every width (ZADARMO is 6.0em wide, 49,99 € is 3.45em) */
+.hang{ display:flex; min-width:0; container-type:inline-size; --str:20px }
+.hang:nth-child(2){ --str:38px }
+.hang:nth-child(3){ --str:27px }
+.swing{
+  position:relative; flex:1; min-width:0; display:flex; flex-direction:column;
+  transform-origin:50% 8.5px; perspective:900px;
+}
+/* the string: one loop, over the rail and through the eyelet */
+.pstr{
+  position:absolute; z-index:3; left:50%; top:0; width:10px; margin-left:-5px;
+  height:calc(var(--str) + 11px + var(--hole) + var(--hr)); border:1.5px solid var(--ink); border-radius:5px;
+  pointer-events:none;
+}
+.tagbox{
+  position:relative; z-index:2; flex:1; display:flex; min-width:0; margin-top:calc(11px + var(--str));
+  /* the first shadow is the paper's edge — it is what draws the unbleached tag's
+     shoulders and eyelet on a bone ground */
+  filter:drop-shadow(0 0 .6px rgba(23,22,26,.42)) drop-shadow(0 16px 20px rgba(23,22,26,.16));
+}
+/* the tag: clipped shoulders, a punched eyelet and two notches at the perforation —
+   real holes (mask), so the shadow above follows the true outline */
+.ptag{
+  --tb:var(--surface); --tf:var(--ink); --tm:var(--muted); --tl:rgba(23,22,26,.26);
+  --m1:radial-gradient(circle at 50% var(--hole),transparent calc(var(--hr) - .5px),#000 var(--hr));
+  --m2:radial-gradient(circle at 0 calc(100% - var(--stub)),transparent 6px,#000 6.5px);
+  --m3:radial-gradient(circle at 100% calc(100% - var(--stub)),transparent 6px,#000 6.5px);
+  position:relative; flex:1; min-width:0; display:flex; flex-direction:column;
+  padding:calc(var(--hole) + var(--hr) + 14px) var(--pin) 0;
+  background:var(--tb); color:var(--tf); border-radius:0 0 12px 12px;
+  clip-path:polygon(var(--cut) 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,0 100%,0 var(--cut));
+  -webkit-mask:var(--m1),var(--m2),var(--m3); -webkit-mask-composite:source-in;
+  mask:var(--m1),var(--m2),var(--m3); mask-composite:intersect;
+}
+.ptag--free{ --tb:var(--alt) }
+.ptag--pro{
+  --tb:var(--ultra); --tf:var(--on-ultra); --tl:rgba(243,239,228,.42);
+  --tm:color-mix(in srgb,var(--on-ultra) 78%,transparent);
+}
+/* the eyelet's reinforcing ring — the mask punches its middle out */
+.ptag::before{
+  content:''; position:absolute; left:50%; top:var(--hole);
+  width:calc(var(--hr) * 2 + 8px); height:calc(var(--hr) * 2 + 8px); transform:translate(-50%,-50%);
+  border-radius:50%; background:color-mix(in srgb,var(--tf) 15%,transparent);
+}
+.ptag-n{
+  margin:0; font-size:clamp(.64rem,12.4cqw,2rem); font-weight:900; font-stretch:112%;
+  line-height:1; letter-spacing:-.03em; text-transform:uppercase;
+}
+/* the name rides high under the eyelet, the line sits low on the tear: whatever
+   slack a longer string leaves opens between them, never under the price */
+.ptag-o{ margin:auto 0 14px; padding-top:8px; font-size:clamp(.66rem,10.8cqw,1rem); line-height:1.38; color:var(--tm) }
+.pstub{
+  height:var(--stub); margin:0 calc(-1 * var(--pin)); padding:0 var(--pin) 13px;
+  display:flex; flex-direction:column; justify-content:flex-end; border-top:2px dashed var(--tl);
+}
+.pprice{
+  margin:0; font-family:'Fraunces',Georgia,serif; font-weight:600; font-variant-numeric:lining-nums;
+  font-size:clamp(1rem,21cqw,2.8rem); line-height:1.05; letter-spacing:-.02em; white-space:nowrap;
+}
+.pper{
+  margin:5px 0 0; color:var(--tm);
+  font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:clamp(8.5px,9.2cqw,10.5px); line-height:1.35; letter-spacing:.04em;
+}
+/* the saving, stuck on at the perforation the way a shop marks a tag down. Narrow
+   tags carry it just under the tear, where it cannot cover the line above it. */
+.pstick{
+  position:absolute; z-index:4; right:-6px; bottom:calc(var(--stub) - 18px); margin:0;
+  padding:3px 7px; border-radius:5px; background:var(--zips); color:var(--on-zips);
+  font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:9px; font-weight:600; letter-spacing:.02em; white-space:nowrap;
+  transform:rotate(-5deg) scale(.3); transform-origin:72% 50%; opacity:0; visibility:hidden;
+}
+.tagbox[data-per="y"] .pstick{
+  transform:rotate(-5deg); opacity:1; visibility:visible;
+  transition:transform .5s var(--spring) .1s, opacity .12s linear .1s;
+}
+
+/* the care label: the comparison, sewn in under the tags */
+.care{ border:2px dashed rgba(23,22,26,.26); border-radius:4px; padding:2px 0; min-width:0 }
+.ctab{ display:block; width:100%; margin:0; border-collapse:collapse }
+.ctab thead,.ctab tbody{ display:block }
+.ctab tr{
+  display:grid; grid-template-columns:var(--pcols); column-gap:var(--pgap); align-items:start;
+  padding:16px 0 18px; border-top:1px solid var(--line);
+}
+/* the column names stay with the numbers: once the tags have scrolled away, a
+   row of three bare figures would have nothing to say which bundle is which */
+.ctab thead{
+  position:sticky; z-index:5; top:var(--hdr-h);
+  background:var(--bone); border-bottom:1px solid var(--line);
+}
+.ctab thead tr{ padding:13px 0 12px; border-top:0; align-items:end }
+.ctab th,.ctab td{ display:block; min-width:0; padding:0 var(--pin); text-align:left; font-weight:400 }
+.ctab thead th{
+  font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:10px; font-weight:600;
+  letter-spacing:.18em; text-transform:uppercase;
+}
+.ctab th[scope="row"]{ grid-column:1 / -1; margin-bottom:12px }
+/* narrow: the label's own title would make the pinned row two lines tall, so it
+   steps out of the grid — still the first column header to a screen reader */
+.ctab thead th:first-child{
+  position:absolute; width:1px; height:1px; margin:-1px; padding:0;
+  overflow:hidden; clip-path:inset(50%); white-space:nowrap;
+}
+.ctab tbody tr:first-child{ border-top:0 }
+.crn{ font-size:1rem; font-weight:750; letter-spacing:-.01em }
+.cru{
+  margin-left:4px; color:var(--muted);
+  font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:10.5px; letter-spacing:.06em;
+}
+.crs{ display:block; margin-top:3px; max-width:46ch; font-size:.86rem; line-height:1.45; color:var(--muted) }
+.cnum{
+  display:block; font-size:clamp(1.3rem,6.3vw,1.9rem); font-weight:800; font-stretch:104%;
+  line-height:1; letter-spacing:-.025em; font-variant-numeric:tabular-nums; white-space:nowrap;
+}
+.cnote{
+  display:block; margin-top:7px; color:var(--muted);
+  font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:10px; line-height:1.45; letter-spacing:.02em;
+}
+.cno .cnum{ font-weight:500; color:var(--muted) }
+.cblock{
+  display:grid; grid-template-columns:var(--pcols); column-gap:var(--pgap);
+  padding:18px 0 20px; border-top:1px solid var(--line);
+}
+.cblock > *{ grid-column:1 / -1; min-width:0; padding:0 var(--pin) }
+.cblock h3{ margin:0 0 12px; font-size:1rem; font-weight:750; letter-spacing:-.01em; line-height:1.3 }
+.cblock h3 small{ display:block; margin-top:3px; font-size:.86rem; font-weight:400; letter-spacing:0; color:var(--muted) }
+.cevery{ list-style:none; margin:0; display:grid; gap:9px var(--pgap) }
+/* a zipper tooth for a bullet: down the list they read as a chain */
+.cevery li{ position:relative; padding-left:20px; font-size:.95rem; line-height:1.4 }
+.cevery li::before{
+  content:''; position:absolute; left:0; top:.52em; width:11px; height:4px; border-radius:2px; background:var(--zips);
+}
+.cblock .cnote{ margin-top:14px }
+.cwhere p{ margin:0 0 8px; max-width:64ch; font-size:.95rem; line-height:1.5 }
+.cwhere p:last-child{ margin-bottom:0; color:var(--muted) }
+
+.pfine{ margin-top:24px; display:grid; gap:9px; max-width:78ch }
+.pinv{ margin:8px 0 0; font-size:.98rem; line-height:1.5 }
+.plink{
+  font-weight:700; text-decoration:underline; text-decoration-color:var(--zips);
+  text-decoration-thickness:2px; text-underline-offset:4px;
+}
+
+@media (min-width:640px){
+  #cennik{ --pgap:16px; --pin:18px; --stub:106px; --hole:22px; --hr:6.5px; --cut:16px }
+  .hang{ --str:26px } .hang:nth-child(2){ --str:50px } .hang:nth-child(3){ --str:36px }
+  .ptag-o{ margin-bottom:18px; padding-top:10px }
+  .pstub{ padding-bottom:18px }
+  .pper{ letter-spacing:.08em }
+  .pstick{ right:-10px; padding:4px 9px; font-size:11px; bottom:calc(var(--stub) - 13px) }
+  .cnote{ font-size:10.5px }
+}
+@media (min-width:1100px){
+  #cennik{ --pcols:minmax(0,1.9fr) repeat(3,minmax(0,1fr)); --pgap:20px; --pin:22px; --stub:130px; --hole:24px; --hr:7px; --cut:18px }
+  .pgrid{ grid-template-columns:var(--pcols); column-gap:var(--pgap); align-items:start }
+  .ptags{ grid-column:2 / -1 }
+  /* the eyebrow sits on the rail's own line: 17px line box, centred on 8.5px */
+  .prail{ left:-20px }
+  .ptags ul{ min-height:436px }
+  /* the label's edge steps out into the gutters so its TEXT keeps the page's edge */
+  .care{ grid-column:1 / -1; margin:0 -24px; padding:4px 24px }
+  .ctab tr{ padding:18px 0 20px }
+  .ctab thead tr{ padding:16px 0 14px }
+  .ctab th[scope="row"]{ grid-column:auto; padding-left:0; margin-bottom:0 }
+  .ctab thead th:first-child{
+    position:static; width:auto; height:auto; margin:0; padding:0 var(--pin) 0 0;
+    overflow:visible; clip-path:none; white-space:normal;
+  }
+  .cblock{ padding:22px 0 24px }
+  .cblock h3{ grid-column:1; margin:0; padding-left:0 }
+  .cblock > .cevery,.cblock > .cwhere,.cblock > .cnote{ grid-column:2 / -1 }
+  .cevery{ grid-template-columns:repeat(3,minmax(0,1fr)); padding:0 }
+  .cevery li{ padding-left:var(--pin) }
+  .cnum{ font-size:2rem }
+}
+
+/* the arrival — one moment: the rail draws, three tags swing in and settle */
+html.motion .ptags.rise{ opacity:1; transform:none; transition:none }
+html.motion .ptags.rise .prail{ transform:scaleX(0) }
+html.motion .ptags.rise.in .prail{ transform:none; transition:transform .9s var(--ease) }
+html.motion .ptags.rise .swing{ opacity:0 }
+html.motion .ptags.rise.in .swing{ animation:psway 1.7s ease-in-out calc(.26s + var(--i,0) * .13s) both }
+@keyframes psway{
+  0%{ opacity:0; transform:translateY(-22px) rotate(calc(var(--s,1) * -9deg)) }
+  10%{ opacity:1 }
+  24%{ transform:translateY(0) rotate(calc(var(--s,1) * 5deg)) }
+  44%{ transform:rotate(calc(var(--s,1) * -2.8deg)) }
+  62%{ transform:rotate(calc(var(--s,1) * 1.5deg)) }
+  80%{ transform:rotate(calc(var(--s,1) * -.6deg)) }
+  100%{ opacity:1; transform:none }
+}
+
 /* ── reveals (enhancement only) ───────────────────────────────────────── */
 html.motion .rise{ opacity:0; transform:translateY(18px); transition:opacity .55s ease, transform .55s var(--ease); transition-delay:calc(var(--d,0) * 70ms) }
 html.motion .rise.in{ opacity:1; transform:none }
@@ -1712,6 +1965,168 @@ html.motion .phones.in .scr--closet .t:nth-child(8){ animation-delay:.49s } html
     </div>
   </section>
 
+  <!-- ═══ pricing — three swing tags on a rail; the comparison is their care label ═══
+       Every number is the app's own: supabase/functions/_shared/tiers.ts (TIER_ALLOWANCES),
+       free picks = the profiles.weekly_ai_quota default (migration 0029). A paid tag holds
+       both prices in data-<lang>-m / data-<lang>-y; the script copies the chosen pair into
+       data-sk / data-en, which is all the language switch ever reads. -->
+  <section class="sec" id="cennik" aria-labelledby="h-cennik">
+    <div class="wrap">
+      <div class="pgrid">
+        <div class="pintro">
+          <p class="eyebrow rise"><i class="tooth"></i><span data-sk="Cenník" data-en="Pricing">Cenník</span></p>
+          <h2 class="h2 rise" style="--d:1" id="h-cennik" data-sk="Tri cenovky. Na jednej je nula." data-en="Three price tags. One says zero.">Tri cenovky. Na jednej je nula.</h2>
+          <p class="lede rise" style="--d:2" data-sk="Šatník, plán aj štatistiky máš v každom balíku. Platíš až za viac AI: viac výberov outfitu, viac otázok, viac fotiek ako z katalógu a v Pro aj kabínku Na mne." data-en="The wardrobe, the plan and the stats come with every bundle. You pay only for more AI: more outfit picks, more questions, more catalogue-style photos and, in Pro, the Na mne fitting room.">Šatník, plán aj štatistiky máš v každom balíku. Platíš až za viac AI: viac výberov outfitu, viac otázok, viac fotiek ako z katalógu a v Pro aj kabínku Na mne.</p>
+          <div class="rise" style="--d:3">
+            <div class="bill" id="bill" role="group" data-sk-aria="Obdobie platby" data-en-aria="Billing period" aria-label="Obdobie platby">
+              <span class="bill-pill" aria-hidden="true"></span>
+              <button class="bill-b" type="button" data-p="m" aria-pressed="true" data-sk="Mesačne" data-en="Monthly">Mesačne</button>
+              <button class="bill-b" type="button" data-p="y" aria-pressed="false" data-sk="Ročne" data-en="Yearly">Ročne</button>
+            </div>
+            <p class="bill-cap" data-sk="Ročne vyjde Plus o 30 % lacnejšie, Pro o 17 %." data-en="Paid yearly, Plus comes out 30 % cheaper and Pro 17 %.">Ročne vyjde Plus o 30 % lacnejšie, Pro o 17 %.</p>
+            <p class="vh" id="bill-live" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div class="ptags rise" id="ptags">
+          <i class="prail" aria-hidden="true"></i>
+          <ul role="list">
+            <li class="hang" style="--i:0;--s:1">
+              <div class="swing">
+                <i class="pstr" aria-hidden="true"></i>
+                <div class="tagbox">
+                  <div class="ptag ptag--free">
+                    <h3 class="ptag-n" data-sk="Zadarmo" data-en="Free">Zadarmo</h3>
+                    <p class="ptag-o" data-sk="Každé ráno outfit na počasie z vecí, ktoré máš" data-en="An outfit for the weather every morning, from what you own">Každé ráno outfit na počasie z vecí, ktoré máš</p>
+                    <div class="pstub">
+                      <p class="pprice" data-sk="0 €" data-en="€0">0 €</p>
+                      <p class="pper" data-sk="bez predplatného" data-en="no subscription">bez predplatného</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="hang" style="--i:1;--s:-1">
+              <div class="swing">
+                <i class="pstr" aria-hidden="true"></i>
+                <div class="tagbox" data-per="m">
+                  <div class="ptag ptag--plus">
+                    <h3 class="ptag-n" data-sk="Plus" data-en="Plus">Plus</h3>
+                    <p class="ptag-o" data-sk="Tvoje oblečenie odfotené ako z katalógu" data-en="Your clothes photographed like a catalogue">Tvoje oblečenie odfotené ako z katalógu</p>
+                    <div class="pstub">
+                      <p class="pprice" data-sk="5,99 €" data-en="€5.99" data-sk-m="5,99 €" data-en-m="€5.99" data-sk-y="49,99 €" data-en-y="€49.99">5,99 €</p>
+                      <p class="pper" data-sk="mesačne" data-en="a month" data-sk-m="mesačne" data-en-m="a month" data-sk-y="ročne" data-en-y="a year">mesačne</p>
+                    </div>
+                  </div>
+                  <p class="pstick" data-sk="ušetríš 30 %" data-en="save 30 %">ušetríš 30 %</p>
+                </div>
+              </div>
+            </li>
+            <li class="hang" style="--i:2;--s:1">
+              <div class="swing">
+                <i class="pstr" aria-hidden="true"></i>
+                <div class="tagbox" data-per="m">
+                  <div class="ptag ptag--pro">
+                    <h3 class="ptag-n" data-sk="Pro" data-en="Pro">Pro</h3>
+                    <p class="ptag-o" data-sk="Vyskúšaj si outfit priamo na sebe" data-en="See the outfit on you">Vyskúšaj si outfit priamo na sebe</p>
+                    <div class="pstub">
+                      <p class="pprice" data-sk="9,99 €" data-en="€9.99" data-sk-m="9,99 €" data-en-m="€9.99" data-sk-y="99,99 €" data-en-y="€99.99">9,99 €</p>
+                      <p class="pper" data-sk="mesačne" data-en="a month" data-sk-m="mesačne" data-en-m="a month" data-sk-y="ročne" data-en-y="a year">mesačne</p>
+                    </div>
+                  </div>
+                  <p class="pstick" data-sk="ušetríš 17 %" data-en="save 17 %">ušetríš 17 %</p>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- The comparison. The rows are CSS grids (to share the tags' columns), and a grid
+             row is no longer a table row to assistive tech — so every role is spelled out. -->
+        <div class="care rise" style="--d:1">
+          <table class="ctab" role="table" data-sk-aria="Porovnanie balíkov" data-en-aria="Bundle comparison" aria-label="Porovnanie balíkov">
+            <thead role="rowgroup">
+              <tr role="row">
+                <th role="columnheader" scope="col" data-sk="Zloženie" data-en="Composition">Zloženie</th>
+                <th role="columnheader" scope="col" data-sk="Zadarmo" data-en="Free">Zadarmo</th>
+                <th role="columnheader" scope="col" data-sk="Plus" data-en="Plus">Plus</th>
+                <th role="columnheader" scope="col" data-sk="Pro" data-en="Pro">Pro</th>
+              </tr>
+            </thead>
+            <tbody role="rowgroup">
+              <tr role="row">
+                <th role="rowheader" scope="row"><span class="crn" data-sk="Výbery outfitu" data-en="Outfit picks">Výbery outfitu</span> <span class="cru" data-sk="týždenne" data-en="a week">týždenne</span><span class="crs" data-sk="Fazo poskladá outfit na počasie z vecí, ktoré máš." data-en="Fazo builds an outfit for the weather from what you own.">Fazo poskladá outfit na počasie z vecí, ktoré máš.</span></th>
+                <td role="cell"><b class="cnum">25</b></td>
+                <td role="cell"><b class="cnum">60</b></td>
+                <td role="cell"><b class="cnum">100</b></td>
+              </tr>
+              <tr role="row">
+                <th role="rowheader" scope="row"><span class="crn" data-sk="Otázky pre Fazo" data-en="Questions for Fazo">Otázky pre Fazo</span> <span class="cru" data-sk="mesačne" data-en="a month">mesačne</span><span class="crs" data-sk="Pýtaj sa na čokoľvek o svojom šatníku." data-en="Ask anything about your wardrobe.">Pýtaj sa na čokoľvek o svojom šatníku.</span></th>
+                <td role="cell"><b class="cnum">30</b></td>
+                <td role="cell"><b class="cnum">120</b></td>
+                <td role="cell"><b class="cnum">300</b></td>
+              </tr>
+              <tr role="row">
+                <th role="rowheader" scope="row"><span class="crn" data-sk="Čítania fotiek štýlu" data-en="Style-photo reads">Čítania fotiek štýlu</span> <span class="cru" data-sk="denne" data-en="a day">denne</span><span class="crs" data-sk="Ukáž fotky outfitov, ktoré sa ti páčia, a Fazo z nich prečíta tvoj štýl." data-en="Show photos of outfits you love and Fazo reads your style from them.">Ukáž fotky outfitov, ktoré sa ti páčia, a Fazo z nich prečíta tvoj štýl.</span></th>
+                <td role="cell"><b class="cnum">4</b></td>
+                <td role="cell"><b class="cnum">12</b></td>
+                <td role="cell"><b class="cnum">30</b></td>
+              </tr>
+              <tr role="row">
+                <th role="rowheader" scope="row"><span class="crn" data-sk="Vylepšenia fotiek" data-en="Photo finishes">Vylepšenia fotiek</span><span class="crs" data-sk="Tvoje oblečenie odfotené ako z katalógu." data-en="Your clothes photographed like a catalogue.">Tvoje oblečenie odfotené ako z katalógu.</span></th>
+                <td role="cell"><b class="cnum">10</b><span class="cnote" data-sk="na začiatok, potom 0 mesačne" data-en="to start, then 0 a month">na začiatok, potom 0 mesačne</span></td>
+                <td role="cell"><b class="cnum">60</b><span class="cnote" data-sk="na začiatok, potom 15 mesačne" data-en="to start, then 15 a month">na začiatok, potom 15 mesačne</span></td>
+                <td role="cell"><b class="cnum">120</b><span class="cnote" data-sk="na začiatok, potom 20 mesačne" data-en="to start, then 20 a month">na začiatok, potom 20 mesačne</span></td>
+              </tr>
+              <tr role="row">
+                <th role="rowheader" scope="row"><span class="crn" data-sk="Náhľady Na mne" data-en="Na mne looks">Náhľady Na mne</span> <span class="cru" data-sk="mesačne" data-en="a month">mesačne</span><span class="crs" data-sk="Tvoja fotka, oblečená. AI kabínka, v ktorej si outfit vyskúšaš na sebe." data-en="Your photo, dressed. The AI fitting room where you try an outfit on yourself.">Tvoja fotka, oblečená. AI kabínka, v ktorej si outfit vyskúšaš na sebe.</span></th>
+                <td role="cell" class="cno"><b class="cnum" aria-hidden="true">—</b><span class="vh" data-sk="nie je v balíku" data-en="not included">nie je v balíku</span></td>
+                <td role="cell" class="cno"><b class="cnum" aria-hidden="true">—</b><span class="vh" data-sk="nie je v balíku" data-en="not included">nie je v balíku</span></td>
+                <td role="cell"><b class="cnum">8</b></td>
+              </tr>
+              <tr role="row">
+                <th role="rowheader" scope="row"><span class="crn" data-sk="Cena" data-en="Price">Cena</span><span class="crs" data-sk="Podľa slovenského App Storu." data-en="As in the Slovak App Store.">Podľa slovenského App Storu.</span></th>
+                <td role="cell"><b class="cnum" data-sk="0 €" data-en="€0">0 €</b><span class="cnote" data-sk="bez predplatného" data-en="no subscription">bez predplatného</span></td>
+                <td role="cell"><b class="cnum" data-sk="5,99 €" data-en="€5.99">5,99 €</b><span class="cnote" data-sk="mesačne, alebo 49,99 € ročne" data-en="a month, or €49.99 a year">mesačne, alebo 49,99 € ročne</span></td>
+                <td role="cell"><b class="cnum" data-sk="9,99 €" data-en="€9.99">9,99 €</b><span class="cnote" data-sk="mesačne, alebo 99,99 € ročne" data-en="a month, or €99.99 a year">mesačne, alebo 99,99 € ročne</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="cblock">
+            <h3><span data-sk="V každom balíku" data-en="In every bundle">V každom balíku</span> <small data-sk="Zadarmo, Plus aj Pro." data-en="Free, Plus and Pro alike.">Zadarmo, Plus aj Pro.</small></h3>
+            <ul class="cevery" role="list">
+              <li data-sk="Skenovanie oblečenia, aj 20 fotiek naraz" data-en="Scanning your clothes, up to 20 photos at once">Skenovanie oblečenia, aj 20 fotiek naraz</li>
+              <li data-sk="Outfity poskladané ručne" data-en="Outfits built by hand">Outfity poskladané ručne</li>
+              <li data-sk="Plán outfitov na týždeň" data-en="A week of outfits, planned">Plán outfitov na týždeň</li>
+              <li data-sk="Balenie na cestu" data-en="Trip packing">Balenie na cestu</li>
+              <li data-sk="Štatistiky šatníka" data-en="Wardrobe stats">Štatistiky šatníka</li>
+              <li data-sk="Fazos: looky ostatných a tvoj lookbook" data-en="Fazos: other people's looks and your own lookbook">Fazos: looky ostatných a tvoj lookbook</li>
+              <li data-sk="Kúsky z účtenky a z odkazu" data-en="Pieces from a receipt or a shop link">Kúsky z účtenky a z odkazu</li>
+              <li data-sk="Webová verzia v prehliadači" data-en="The web version, in your browser">Webová verzia v prehliadači</li>
+            </ul>
+            <p class="cnote" data-sk="Niektoré majú denný limit, rovnaký v každom balíku." data-en="Some have a daily limit, the same in every bundle.">Niektoré majú denný limit, rovnaký v každom balíku.</p>
+          </div>
+
+          <div class="cblock">
+            <h3 data-sk="Kde to platí" data-en="Where it applies">Kde to platí</h3>
+            <div class="cwhere">
+              <p data-sk="Predplatné kúpiš v aplikácii Fazo na iPhone cez App Store." data-en="You buy a subscription in the Fazo app on iPhone, through the App Store.">Predplatné kúpiš v aplikácii Fazo na iPhone cez App Store.</p>
+              <p data-sk="Patrí k tvojmu účtu Fazo, takže platí aj vo webovej verzii." data-en="It belongs to your Fazo account, so it holds in the web version too.">Patrí k tvojmu účtu Fazo, takže platí aj vo webovej verzii.</p>
+              <p data-sk="Na webe si šatník prezrieš, naplánuješ outfity a pozrieš štatistiky. Fotenie, strihanie a skúšanie fungujú v aplikácii na iPhone." data-en="On the web you browse your wardrobe, plan outfits and read your stats. Photos, cut-outs and try-on work in the app on your iPhone.">Na webe si šatník prezrieš, naplánuješ outfity a pozrieš štatistiky. Fotenie, strihanie a skúšanie fungujú v aplikácii na iPhone.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pfine rise">
+        <p class="fnote fnote--sent" data-sk="Ceny sú zo slovenského App Storu a v inej krajine sa môžu líšiť. Platnú cenu ti pred nákupom ukáže App Store." data-en="Prices are the Slovak App Store's and can differ by country. The App Store shows the price that applies before you buy.">Ceny sú zo slovenského App Storu a v inej krajine sa môžu líšiť. Platnú cenu ti pred nákupom ukáže App Store.</p>
+        <p class="fnote fnote--sent" data-sk="Predplatné sa obnovuje automaticky, kým ho nezrušíš v Nastaveniach Apple ID najneskôr deň pred koncom obdobia." data-en="The subscription renews automatically until you cancel it in your Apple ID settings at least a day before the period ends.">Predplatné sa obnovuje automaticky, kým ho nezrušíš v Nastaveniach Apple ID najneskôr deň pred koncom obdobia.</p>
+        <p class="pinv"><span data-sk="Fazo je zatiaľ v súkromnom testovaní." data-en="Fazo is still in private testing.">Fazo je zatiaľ v súkromnom testovaní.</span> <a class="plink" href="mailto:martinorolin12@gmail.com?subject=Fazo%20%E2%80%94%20pozv%C3%A1nka" data-sk="Požiadať o pozvánku" data-en="Request an invite">Požiadať o pozvánku</a></p>
+      </div>
+    </div>
+  </section>
+
   <section class="sec sec--ultra" id="sukromie" aria-labelledby="h-sukromie">
     <div class="wrap">
       <p class="eyebrow rise"><i class="tooth"></i><span data-sk="Súkromie" data-en="Privacy">Súkromie</span></p>
@@ -1786,6 +2201,7 @@ html.motion .phones.in .scr--closet .t:nth-child(8){ animation-delay:.49s } html
   var secs = [
     ['co-je-fazo', 'Produkt', 'Product'],           ['film', 'Film', 'Film'],
     ['ako-to-funguje', 'Ako to funguje', 'How it works'], ['a-este', 'A ešte', 'And more'],
+    ['cennik', 'Cenník', 'Pricing'],
     ['sukromie', 'Súkromie', 'Privacy'],           ['pozvanka', 'Pozvánka', 'Invite']
   ];
   var rail  = document.getElementById('rail');
@@ -1841,6 +2257,84 @@ html.motion .phones.in .scr--closet .t:nth-child(8){ animation-delay:.49s } html
     var b = e.target.closest('.rail-m'); if (!b) return;
     var t = document.getElementById(b.dataset.t);
     if (t) t.scrollIntoView({ behavior: rmq.matches ? 'auto' : 'smooth', block: 'start' });
+  });
+
+  /* ── pricing: the billing period ─────────────────────────────────────────
+     A paid tag carries both prices (data-<lang>-m / data-<lang>-y). Choosing a
+     period copies that pair into data-sk / data-en — the attributes setLang reads —
+     so the two switches never have to know about each other.
+     With motion, a tag turns on its string and the copy happens while it is
+     edge-on, so nobody sees the digits change. Reduced motion (or no Web
+     Animations) swaps at once. Outside the motion gate on purpose: this answers
+     a tap, it is not a scroll effect. */
+  var bill     = document.getElementById('bill');
+  var billLive = document.getElementById('bill-live');
+  var paid     = Array.prototype.slice.call(document.querySelectorAll('.tagbox[data-per]'));
+  var per      = 'm';
+  function showPer(box, p) {
+    box.setAttribute('data-per', p);
+    box.querySelectorAll('[data-sk-m]').forEach(function (n) {
+      n.setAttribute('data-sk', n.getAttribute('data-sk-' + p));
+      n.setAttribute('data-en', n.getAttribute('data-en-' + p));
+      n.textContent = n.getAttribute('data-' + loc);
+    });
+  }
+  function setBill(p) {
+    per = p;
+    bill.style.setProperty('--b', p === 'y' ? 1 : 0);
+    bill.querySelectorAll('.bill-b').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.p === p));
+    });
+    paid.forEach(function (box, i) {
+      if (box._tw) { box._tw.cancel(); box._tw = null; }
+      if (rmq.matches || !box.animate) { showPer(box, p); return; }
+      var out = box._tw = box.animate(
+        [{ transform: 'rotateY(0deg)' }, { transform: 'rotateY(90deg)' }],
+        { duration: 190, delay: i * 90, easing: 'cubic-bezier(.5,0,.9,.5)', fill: 'forwards' });
+      out.onfinish = function () {
+        showPer(box, per);
+        /* back round from the far side, then the string takes the spin out of it */
+        box._tw = box.animate([
+          { transform: 'rotateY(-90deg)', easing: 'cubic-bezier(.15,.7,.3,1)' },
+          { transform: 'rotateY(16deg)', offset: 0.5 },
+          { transform: 'rotateY(-7deg)', offset: 0.74 },
+          { transform: 'rotateY(2deg)', offset: 0.9 },
+          { transform: 'rotateY(0deg)' }
+        ], { duration: 760, easing: 'ease-in-out' });
+        out.cancel();
+      };
+    });
+    /* the prices changed without the focus moving — say so, once */
+    if (billLive) {
+      billLive.textContent = paid.map(function (box) {
+        var k = 'data-' + loc;
+        return box.querySelector('.ptag-n').getAttribute(k) + ' ' +
+          box.querySelector('.pprice').getAttribute(k + '-' + p) + ' ' +
+          box.querySelector('.pper').getAttribute(k + '-' + p);
+      }).join(', ');
+    }
+  }
+  if (bill) bill.addEventListener('click', function (e) {
+    var b = e.target.closest('.bill-b'); if (!b) return;
+    if (b.dataset.p !== per) setBill(b.dataset.p);
+  });
+  /* a hanging tag answers a touch: a small push away from the side the pointer
+     came in on, and the string settles it. Never while it is still arriving. */
+  Array.prototype.forEach.call(document.querySelectorAll('#ptags .swing'), function (sw) {
+    var box = sw.querySelector('.tagbox');
+    box.addEventListener('pointerenter', function (e) {
+      if (rmq.matches || !sw.animate || !sw.getAnimations) return;
+      if (sw.getAnimations().some(function (a) { return a.playState === 'running'; })) return;
+      var r = box.getBoundingClientRect();
+      var d = e.clientX < r.left + r.width / 2 ? -1 : 1;
+      sw.animate([
+        { transform: 'rotate(0deg)' },
+        { transform: 'rotate(' + (2.4 * d) + 'deg)', offset: 0.22 },
+        { transform: 'rotate(' + (-1.4 * d) + 'deg)', offset: 0.5 },
+        { transform: 'rotate(' + (0.6 * d) + 'deg)', offset: 0.76 },
+        { transform: 'rotate(0deg)' }
+      ], { duration: 1100, easing: 'ease-in-out' });
+    });
   });
 
   /* ── section reveals ── */
