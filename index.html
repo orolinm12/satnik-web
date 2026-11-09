@@ -5,6 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Fazo — Rozopni svoj štýl.</title>
 <meta name="description" content="Fazo je osobný AI asistent do šatníka: odfotíš, čo máš — aj 20 kúskov naraz — a každé ráno dostaneš outfit na počasie aj na tvoj deň.">
+<meta name="theme-color" content="#F3EFE4">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/v2/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/v2/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Fazo">
+<meta property="og:locale" content="sk_SK">
+<meta property="og:url" content="https://orolinm12.github.io/satnik-web/">
+<meta property="og:title" content="Fazo — Rozopni svoj štýl.">
+<meta property="og:description" content="Osobný AI asistent do šatníka. Každé ráno outfit na počasie z vecí, ktoré už máš.">
+<meta property="og:image" content="https://orolinm12.github.io/satnik-web/assets/v2/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Fazo — Rozopni svoj štýl.">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Fraunces:opsz,wght@9..144,600..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -838,20 +852,28 @@ html.motion .rise.in .tooth{ transform:none }
 }
 
 /* ── the device ─────────────────────────────────────────────────────────── */
+/* A phone is never taller than the window minus the header and its caption: its bottom edge stays on screen on a laptop
+   and on a phone, where the toolbars eat the height. 148 = sticky top 88 + caption 28 + air. */
+:root{ --phone-fit:max(210px, calc((100vh - 148px) * 390 / 844)) }
+@supports (height:100svh){ :root{ --phone-fit:max(210px, calc((100svh - 148px) * 390 / 844)) } }
 .dev{ margin:0; display:flex; flex-direction:column; align-items:center }
 .scr{
-  position:relative; width:min(292px,76vw); aspect-ratio:390/844;
-  background:var(--ink); border-radius:46px; padding:8px;
-  box-shadow:0 30px 60px -18px rgba(23,22,26,.42), 0 0 0 1px rgba(23,22,26,.08) inset;
+  /* Frame, corners and island are shares of the phone, so a small phone is the same picture scaled, not a thicker frame. */
+  position:relative; width:min(292px,76vw,var(--phone-fit)); aspect-ratio:390/844;
+  background:var(--ink); border-radius:15.75% / 7.28%;
+  box-shadow:0 16px 34px -20px rgba(23,22,26,.34), 0 3px 10px -4px rgba(23,22,26,.16), 0 0 0 1px rgba(23,22,26,.08) inset;
   container-type:inline-size; min-height:0;   /* aspect-ratio wins over content (min-height:auto would let a tall screen stretch the phone) */
 }
 .scr::before{ /* the island */
-  content:''; position:absolute; top:17px; left:50%; width:30%; height:22px; margin-left:-15%;
-  background:var(--ink); border-radius:12px; z-index:5;
+  content:''; position:absolute; top:2.69%; left:50%; width:30%; height:3.48%; margin-left:-15%;
+  background:var(--ink); border-radius:999px; z-index:5;
 }
 .ui{
-  --u:calc(100cqw / 300);
-  position:relative; width:100%; height:100%; overflow:hidden; border-radius:38px;
+  --u:calc(100cqw * .9452 / 300);   /* the screen is 94.52 % of the phone's width */
+  /* Pinned to the frame on all four sides, so the screen cannot end anywhere but inside it. isolation + translateZ keep the
+     rounded clip on Safari while the pieces inside animate. */
+  position:absolute; inset:1.266% 2.74%; overflow:hidden; border-radius:calc(41.3 * var(--u));
+  isolation:isolate; transform:translateZ(0);
   background:var(--app-bg); color:var(--app-ink);
   font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
   font-size:calc(13 * var(--u)); line-height:1.35; letter-spacing:0;
@@ -859,8 +881,8 @@ html.motion .rise.in .tooth{ transform:none }
   display:flex; flex-direction:column; gap:calc(10 * var(--u));
 }
 .ui img{ display:block; max-width:none }
-.dev--sm .scr{ width:100% }
-.phones .dev .scr{ width:100% }
+.dev--sm .scr{ width:min(100%,292px,var(--phone-fit)) }
+.phones .dev .scr{ width:min(100%,292px,var(--phone-fit)) }
 
 /* ── the app's own atoms ─────────────────────────────────────────────── */
 .ut{ margin:0; font-family:'Fraunces',Georgia,serif; font-weight:700; font-size:calc(30 * var(--u)); line-height:1.05; letter-spacing:-.01em }
@@ -1221,7 +1243,7 @@ html.motion .phones.in .scr--closet .t:nth-child(8){ animation-delay:.49s } html
   .step-t{ position:sticky; top:calc(50vh - 150px); padding-top:40px }
   .step-p{ position:sticky; top:max(88px,calc(50vh - 330px)); justify-self:center }
   .step:nth-child(even) .step-t{ order:2 }
-  .step .scr{ width:300px }
+  .step .scr{ width:min(300px,var(--phone-fit)) }
 }
 
 /* ── and more ───────────────────────────────────────────────────────────── */
@@ -1393,7 +1415,7 @@ html.motion .phones.in .scr--closet .t:nth-child(8){ animation-delay:.49s } html
           <ul class="proof rise" style="--d:3">
             <li><b data-sk="20" data-en="20">20</b><span data-sk="fotiek naraz" data-en="photos at once">fotiek naraz</span></li>
             <li><b data-sk="1 ťuk" data-en="1 tap">1 ťuk</b><span data-sk="na hotový outfit" data-en="to a finished outfit">na hotový outfit</span></li>
-            <li><b data-sk="EÚ" data-en="EU">EÚ</b><span data-sk="súkromné dáta" data-en="private data">súkromné dáta</span></li>
+            <li><b data-sk="Európa" data-en="Europe">Európa</b><span data-sk="súkromné dáta" data-en="private data">súkromné dáta</span></li>
           </ul>
         </div>
         <div class="phones rise" style="--d:3">
@@ -2150,7 +2172,7 @@ html.motion .phones.in .scr--closet .t:nth-child(8){ animation-delay:.49s } html
       <div class="privgrid">
         <div class="priv">
           <h2 class="h2 rise" style="--d:1" id="h-sukromie" data-sk="Tvoje dáta zostávajú súkromné" data-en="Your data stays private">Tvoje dáta zostávajú súkromné</h2>
-          <p class="lede rise" style="--d:2" data-sk="Fotky tvojho oblečenia sú súkromné a uložené na serveroch v EÚ." data-en="Photos of your clothes are private and stored on servers in the EU.">Fotky tvojho oblečenia sú súkromné a uložené na serveroch v EÚ.</p>
+          <p class="lede rise" style="--d:2" data-sk="Fotky tvojho oblečenia sú súkromné a uložené na serveroch v Európe." data-en="Photos of your clothes are private and stored on servers in Europe.">Fotky tvojho oblečenia sú súkromné a uložené na serveroch v Európe.</p>
         </div>
         <svg class="privmark rise" style="--d:3" viewBox="0 0 100 100" aria-hidden="true"><use href="#m-fazo"/></svg>
       </div>
@@ -2248,6 +2270,7 @@ html.motion .phones.in .scr--closet .t:nth-child(8){ animation-delay:.49s } html
   function setLang(l) {
     loc = l;
     root.lang = l;
+    document.title = l === 'en' ? 'Fazo — Style, unzipped.' : 'Fazo — Rozopni svoj štýl.';
     lang.style.setProperty('--l', l === 'en' ? 1 : 0);
     lang.querySelectorAll('.lang-b').forEach(function (b) {
       b.setAttribute('aria-pressed', String(b.dataset.l === l));
