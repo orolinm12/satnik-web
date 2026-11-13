@@ -1,7 +1,7 @@
 {
   "commit": "74e35699",
   "appVersion": "1.6.0",
-  "basePath": "/satnik-web/app",
+  "basePath": "/app",
   "backend": "real",
   "builtAt": "2026-11-09T11:13:45.764Z"
 }
